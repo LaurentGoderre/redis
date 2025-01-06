@@ -5,7 +5,7 @@ alpine="$(
 	bashbrew cat --format '{{ .TagEntry.Tags | join "\n" }}' https://github.com/docker-library/official-images/raw/HEAD/library/alpine:latest \
 		| grep -E '^[0-9]+[.][0-9]+$'
 )"
-[ "$(wc -l <<<"$alpine")" = 1 ]
+[ "$(wc -l <<<"$alpine" | tr -d '[:space:]')" = 1 ]
 export alpine
 
 debian="$(
@@ -13,7 +13,7 @@ debian="$(
 		| grep -vE '^latest$|[0-9.-]' \
 		| head -1
 )"
-[ "$(wc -l <<<"$debian")" = 1 ]
+[ "$(wc -l <<<"$debian" | tr -d '[:space:]')" = 1 ]
 export debian
 
 gosus="$(
@@ -121,6 +121,10 @@ packages="$(
 )"
 
 for version in "${versions[@]}"; do
+	if [ "$(echo $version | grep 'stackbrew')" ]; then
+		continue
+	fi
+
 	export version rcVersion="${version%-rc}"
 
 	doc="$(
